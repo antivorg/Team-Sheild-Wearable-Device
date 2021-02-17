@@ -1,13 +1,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct session;
+
 typedef struct {
     int longitude;
     int latitude;
     int time;
 } packet;
 
-packet createPacket() {
+packet createPacket(void);
+int checksumPacket(char* data, int len);
+int watchWithinHouse(void);
+session startSession(void);
+void updatePosition(session* currentSession);
+
+packet createPacket(void) {
 
     // locate correct packet type
     const char corIdent[7] = "$GPGGA";
@@ -15,7 +23,9 @@ packet createPacket() {
     int checksumBool = 0;
 
     char* dataStr;
+
     while (!checksumBool) {
+
         char ident[7] = "000000";
         int correctPacketBool = 0;
         while (!correctPacketBool) {
@@ -26,8 +36,9 @@ packet createPacket() {
                 if (i<5) ident[i] = ident[i+1];
             }
         }
+
         // extract packet data
-        int dataStrSize = 1, dataBool = 1;
+        int dataStrSize = 0, dataBool = 1;
         dataStr = (char*) malloc(dataStrSize);
         while (dataBool) {
             char symbol = Serial.read();
@@ -35,11 +46,14 @@ packet createPacket() {
                 dataBool = 0;
             } else {
                 dataStr = (char*) realloc(dataStr, ++dataStrSize);
+                dataStr[dataStrSize-1] = symbol;
             }
         }
+        dataStr[dataStrSize] = '\0';
+
         // extract packet checksum
         char* cSumStr;
-        int cSumStrSize = 1, cSumBool = 1;
+        int cSumStrSize = 0, cSumBool = 1;
         cSumStr = malloc(cSumStrSize);
         while (cSumBool) {
             char symbol = Serial.read();
@@ -50,6 +64,8 @@ packet createPacket() {
                 cSumStr[cSumStrSize-1] = symbol;
             }
         }
+        cSumStr[cSumStrSize] = '\0';
+
         int cSum = atoi(cSumStr);
         //checksum = checksumPacket(dataStr, dataStrSize, cSum);
         checksumBool = 1;
@@ -58,9 +74,9 @@ packet createPacket() {
     // parse the data
     packet currentPacket;
     char* tokens = strtok(dataStr, ",");
-    int a = 0;
+    int tokensIndex = 0;
     while (tokens != NULL) {
-        switch (a) {
+        switch (tokensIndex) {
         case 1:
             currentPacket.time = atof(tokens);
             break;
@@ -74,7 +90,7 @@ packet createPacket() {
             tokens = strtok(NULL, ",");
             break;
         }
-        a++;
+        tokensIndex++;
     }
     free(dataStr);
     return currentPacket;
@@ -83,7 +99,7 @@ packet createPacket() {
 int checksumPacket(char* data, int len) { //broken
 
     // Re-create original packet
-    char packetData[len+1];
+    char packetData[len+2];
     strcpy(packetData, data);
     char* packet = strcat("GPGGA", packetData); // fails on this line idk why
 
@@ -96,4 +112,27 @@ int checksumPacket(char* data, int len) { //broken
     return cSum;
 }
 
-int watchWithinHouse(void);
+int watchWithinHouse(void) {
+    packet currentPacket = createPacket();
+    if (( (currentPacket.longitude<homeLongitude+homeRadius) && (currentPacket.longitude>homeLongitude-homeRadius) )
+        || ( (currentPacket.latitude<homeLatitude+homeRadius) && (currentPacket.latitude>homeLatitude-homeRadius) )) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+session startSession(void) {
+    packet currentPacket = createPacket();
+    session currentSession;
+    currentSession.startTime = currentPacket.time;
+    currentSession.previousPacket = currentPacket;
+    return currentSession;
+}
+
+void updatePosition(session* currentSession) {
+    packet currentPacket = createPacket();
+
+
+    currentSession->previousPacket = currentPacket;
+}
