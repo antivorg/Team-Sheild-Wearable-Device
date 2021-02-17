@@ -5,7 +5,15 @@
 
 const int k = 1000;
 
+//we'll get these via the app ofc
+const double homeLongitude = 0;
+const double homeLatitude = 0;
+const double homeRadius = 1;
+
+const double runningSpeedpHr = 6.5;
+
 typedef struct {
+    packet previousPacket;
     int startTime;
     int endTime;
     int stepNum = 0;
@@ -26,18 +34,23 @@ void loop() {
 
     if (watchWithinHouse()) {
         // device is inside thus wait
-        delay(10*k)
+        delay(10*k);
     } else {
         // outside thus outing begins
         session currentOuting = startSession();
         btoothStartOuting(currentOuting);
 
         while (!watchWithinHouse()) {
+            int currentStepCount = currentOuting.stepNum;
             currentOuting.stepNum += countSteps(20, 10*k); // count until 20 steps or 10 seconds has passed
-            updatePosition(currentOuting);
-            btoothUpdateOuting(currentOuting);
+            if (currentStepCount==currentOuting.stepNum) {
+                updatePosition(currentOuting);
+                btoothUpdateOuting(currentOuting);
+            } else {
+                // no new steps thus nothing to update
+                continue;
+            }
         }
-
         currentOuting.endTime = position_time();
         btoothUploadOuting(currentOuting);
     }
