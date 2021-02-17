@@ -69,6 +69,7 @@ packet createPacket(void) {
         int cSum = atoi(cSumStr);
         //checksum = checksumPacket(dataStr, dataStrSize, cSum);
         checksumBool = 1;
+        free(cSumStr);
     }
 
     // parse the data
