@@ -10,12 +10,54 @@ typedef struct {
     int time;
 } packet;
 
-packet createPacket(void);
-int checksumPacket(char* data, int len);
+// Top level functions
 int watchWithinHouse(void);
 session startSession(void);
 void updatePosition(session* currentSession);
+
+// Lower level functions
+packet createPacket(void);
+int checksumPacket(char* data, int len);
 double greatCircleDistance(double long1, double lat1, double long2, double lat2);
+
+
+// Top level functions //
+
+int watchWithinHouse(void) {
+    packet currentPacket = createPacket();
+    if (greatCircleDistance(homeLongitude, homeLatitude,
+                            currentPacket.latitude,
+                            currentPacket.longitude) > homeRadius) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+session startSession(void) {
+    packet currentPacket = createPacket();
+    session currentSession;
+    currentSession.startTime = currentPacket.time;
+    currentSession.previousPacket = currentPacket;
+    return currentSession;
+}
+
+void updatePosition(session* currentSession) {
+    packet currentPacket = createPacket();
+    currentSession->distance = greatCircleDistance(
+                                        currentSession->previousPacket.longitude,
+                                        currentSession->previousPacket.latitude,
+                                        currentPacket.longitude, currentPacket.latitude);
+    if (currentSession->isRunningBool) {
+        currentSession->timeWalking = currentPacket.time-currentSession->previousPacket.time;
+    } else {
+        currentSession->timeRunning = currentPacket.time-currentSession->previousPacket.time;
+    }
+    currentSession->previousPacket = currentPacket;
+}
+
+
+// Lower level functions //
 
 packet createPacket(void) {
 
@@ -69,8 +111,8 @@ packet createPacket(void) {
         cSumStr[cSumStrSize] = '\0';
 
         int cSum = atoi(cSumStr);
-        //checksum = checksumPacket(dataStr, dataStrSize, cSum);
-        checksumBool = 1;
+        checksum = checksumPacket(&dataStr, dataStrSize, cSum);
+        //checksumBool = 1;
         free(cSumStr);
     }
 
@@ -99,7 +141,7 @@ packet createPacket(void) {
     return currentPacket;
 }
 
-int checksumPacket(char* data, int len) { //broken
+int checksumPacket(char* data, int len, int recievedCSum) { //broken
 
     // Re-create original packet
     char packetData[len+2];
@@ -112,47 +154,7 @@ int checksumPacket(char* data, int len) { //broken
         cSum ^= packet[i];
     }
 
-    return cSum;
-}
-
-int watchWithinHouse(void) {
-    packet currentPacket = createPacket();
-    double houseBoundaryNorth = homeLatitude+homeRadius
-    double houseBoundarySouth = homeLatitude-homeRadius
-    double houseBoundaryEast = 
-    double houseBoundaryWest
-
-    if (( (currentPacket.longitude<homeLongitude+homeRadius)
-            && (currentPacket.longitude>homeLongitude-homeRadius) )) {
-        return 1;
-    } else if (( (currentPacket.latitude<homeLatitude+homeRadius)
-                    && (currentPacket.latitude>homeLatitude-homeRadius) )) {
-    
-    } else {
-        return 0;
-    }
-}
-
-session startSession(void) {
-    packet currentPacket = createPacket();
-    session currentSession;
-    currentSession.startTime = currentPacket.time;
-    currentSession.previousPacket = currentPacket;
-    return currentSession;
-}
-
-void updatePosition(session* currentSession) {
-    packet currentPacket = createPacket();
-    currentSession->distance = greatCircleDistance(
-                                        currentSession->previousPacket.longitude,
-                                        currentSession->previousPacket.latitude,
-                                        currentPacket.longitude, currentPacket.latitude);
-    if (currentSession->isRunningBool) {
-        currentSession->timeWalking = currentPacket.time-currentSession->previousPacket.time;
-    } else {
-        currentSession->timeRunning = currentPacket.time-currentSession->previousPacket.time;
-    }
-    currentSession->previousPacket = currentPacket;
+    return cSum==recievedCSum;
 }
 
 double greatCircleDistance(double long1, double lat1, double long2, double lat2) {

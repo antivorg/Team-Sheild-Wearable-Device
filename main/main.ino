@@ -1,7 +1,8 @@
-#include <step.h>
+#include <stepcounter.h>
 #include <position.h>
-//#include <btooth.h>
-//#include <session.h>
+#include <btooth.h>
+
+//#include <SoftwareSerial.h>
 
 const int k = 1000;
 
@@ -23,12 +24,15 @@ typedef struct {
     int timeRunning = 0;
 } session;
 
-session startSession(void);
+// The BlueTooth uses a software serial
+SoftwareSerial btoothSerial(2, 3);
 
 // Entry Point
 
 void setup() {
-
+    Serial.begin(9600);
+    while(!Serial);
+    btoothSerial.begin(9600);
 }
 
 void loop() {
@@ -39,7 +43,7 @@ void loop() {
     } else {
         // outside thus outing begins
         session currentOuting = startSession();
-        btoothStartOuting(currentOuting);
+        btoothStartOuting(&currentOuting);
 
         int prevStepCount = 0;
         while (!watchWithinHouse()) {
