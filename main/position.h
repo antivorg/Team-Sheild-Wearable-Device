@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct session;
 
@@ -14,6 +15,7 @@ int checksumPacket(char* data, int len);
 int watchWithinHouse(void);
 session startSession(void);
 void updatePosition(session* currentSession);
+double greatCircleDistance(double long1, double lat1, double long2, double lat2);
 
 packet createPacket(void) {
 
@@ -133,7 +135,31 @@ session startSession(void) {
 
 void updatePosition(session* currentSession) {
     packet currentPacket = createPacket();
-
-
+    currentSession->distance = greatCircleDistance(
+                                        currentSession->previousPacket.longitude,
+                                        currentSession->previousPacket.latitude,
+                                        currentPacket.longitude, currentPacket.latitude);
+    if (currentSession->isRunningBool) {
+        currentSession->timeWalking = currentPacket.time-currentSession->previousPacket.time;
+    } else {
+        currentSession->timeRunning = currentPacket.time-currentSession->previousPacket.time;
+    }
     currentSession->previousPacket = currentPacket;
+}
+
+double greatCircleDistance(double long1, double lat1, double long2, double lat2) {
+
+    const int earthRadius = 6371*k;
+
+    // uses haversine, accurate for "small distances" (the earth is big yknow)
+    double cos_lat1 = cos(lat1);
+    double cos_lat2 = cos(lat2);
+    double sin2_dlat = sin((lat2-lat1)/2);
+    sin2_dlat = sin2_dlat*sin2_dlat;
+    double sin2_dlong = sin((long2-long1)/2);
+    sin2_dlong = sin2_dlong*sin2_dlong;
+
+    double dSigma = 2*asin(sqrt(sin2_dlat+cos_lat1*cos_lat2*sin2_dlong));
+    return dSigma*earthRadius;
+
 }
