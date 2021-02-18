@@ -52,7 +52,7 @@ void loop() {
                 continue;
             }
         }
-        currentOuting.endTime = position_time();
+        currentOuting.endTime = createPacket().time;
         btoothUploadOuting(currentOuting);
     }
 
