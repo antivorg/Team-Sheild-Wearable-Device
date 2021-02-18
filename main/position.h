@@ -117,11 +117,17 @@ int checksumPacket(char* data, int len) { //broken
 
 int watchWithinHouse(void) {
     packet currentPacket = createPacket();
+    double houseBoundaryNorth = homeLatitude+homeRadius
+    double houseBoundarySouth = homeLatitude-homeRadius
+    double houseBoundaryEast = 
+    double houseBoundaryWest
+
     if (( (currentPacket.longitude<homeLongitude+homeRadius)
-            && (currentPacket.longitude>homeLongitude-homeRadius) )
-                || ( (currentPacket.latitude<homeLatitude+homeRadius)
-                    && (currentPacket.latitude>homeLatitude-homeRadius) )) {
+            && (currentPacket.longitude>homeLongitude-homeRadius) )) {
         return 1;
+    } else if (( (currentPacket.latitude<homeLatitude+homeRadius)
+                    && (currentPacket.latitude>homeLatitude-homeRadius) )) {
+    
     } else {
         return 0;
     }

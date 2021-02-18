@@ -1,4 +1,4 @@
-//#include <step.h>
+#include <step.h>
 #include <position.h>
 //#include <btooth.h>
 //#include <session.h>
@@ -41,12 +41,13 @@ void loop() {
         session currentOuting = startSession();
         btoothStartOuting(currentOuting);
 
+        int prevStepCount = 0;
         while (!watchWithinHouse()) {
-            int prevStepCount = currentOuting.stepNum;
             countSteps(&currentOuting, 20, 10*k);
             if (prevStepCount!=currentOuting.stepNum) {
                 updatePosition(&currentOuting);
                 btoothUpdateOuting(currentOuting);
+                prevStepCount = currentOuting.stepNum;
             } else {
                 // no new steps thus nothing to update
                 continue;
