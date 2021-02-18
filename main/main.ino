@@ -18,6 +18,7 @@ typedef struct {
     int endTime;
     int stepNum = 0;
     int distance = 0;
+    int isRunningBool = 0;
     int timeWalking = 0;
     int timeRunning = 0;
 } session;
@@ -41,10 +42,10 @@ void loop() {
         btoothStartOuting(currentOuting);
 
         while (!watchWithinHouse()) {
-            int currentStepCount = currentOuting.stepNum;
-            currentOuting.stepNum += countSteps(20, 10*k); // count until 20 steps or 10 seconds has passed
-            if (currentStepCount==currentOuting.stepNum) {
-                updatePosition(currentOuting);
+            int prevStepCount = currentOuting.stepNum;
+            countSteps(&currentOuting, 20, 10*k);
+            if (prevStepCount!=currentOuting.stepNum) {
+                updatePosition(&currentOuting);
                 btoothUpdateOuting(currentOuting);
             } else {
                 // no new steps thus nothing to update
