@@ -11,6 +11,8 @@ typedef struct coordinates{
   //float phi
 } coordinates;
 
+//float previous_angle=0;
+
 //typedef struct {
 //  int x;
 //  int y;
@@ -31,8 +33,7 @@ int walking = 0; //the boolean one for deciding walking/running
 // FUNCTION TO GET XYZ ACCELERATION AS A TIMER INTERRUPT
 // GETS VALUES FROM PINS EVERY t SECONDS
 // CALLLS MAGNITUDE AND SUVAT FUNCTIONS
-// CHECKS IF ACCELERATION  AND VELOCITY IS WITHIN RANGE/IF RUNNING
-// CHECKS IF IT SHOULD ADD A STEP
+// CALLS STEPPED FUNCTION
 
 
 /*coordinates toPolar(polar vector){ // finds polar values
@@ -71,29 +72,23 @@ void suvat(){ // calculates missing suvat values
   distance = distance + s.magnitude;
 }
 
-/*void stepped(){
-  if(walking == true){
-    if(acceleration.magnitude<0.5){
-      step = step + 1;
-    }
-  }
-}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// SIDEWAYS ACCELERATION ROUTE
+void stepped(){
+	float angle;
+	if(0 < v.magnitude < 100){ //reasonable velocity
+		angle = (v.x*acceleration.x+v.y*acceleration.y+v.z*acceleration.z)/(v.magnitude*acceleration.magnitude); // dot product/magnitude=cos(theta)
+		if(angle = 0 /*almost 0 will have to find this number from so much testing*/){ // if the dot product = 0 then the acceleration is
+			if(/*lower_bound*/ 0 < acceleration.magnitude < 0 /*upper_bound*/){			// perpendicular to the velocity so the person is mid step
+				steps = steps + 1;														// will require testing to find upper and lower bound and
+			}																			// previous_angle-angle for tolerance
+		}
+		walking=1;
+		if(v.magnitude > 5){ //something reasonable
+			walking=0;
+		}
+	}
+	else{
+		walking=0;
+	}
+	//previous_angle = angle;
+}
