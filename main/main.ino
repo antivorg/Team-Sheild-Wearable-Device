@@ -50,7 +50,7 @@ void loop() {
             countSteps(&currentOuting, 20, 10*k);
             if (prevStepCount!=currentOuting.stepNum) {
                 updatePosition(&currentOuting);
-                btoothUpdateOuting(currentOuting);
+                btoothUpdateOuting(&currentOuting);
                 prevStepCount = currentOuting.stepNum;
             } else {
                 // no new steps thus nothing to update
@@ -58,7 +58,7 @@ void loop() {
             }
         }
         currentOuting.endTime = createPacket().time;
-        btoothUploadOuting(currentOuting);
+        btoothUploadOuting(&currentOuting);
     }
 
 }
