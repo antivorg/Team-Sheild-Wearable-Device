@@ -5,9 +5,9 @@
 typedef struct session;
 
 typedef struct {
-    int longitude;
-    int latitude;
-    int time;
+    double longitude;
+    double latitude;
+    double time;
 } packet;
 
 // Top level functions
@@ -17,7 +17,7 @@ void updatePosition(session* currentSession);
 
 // Lower level functions
 packet createPacket(void);
-int checksumPacket(char* data, int len);
+int checksumPacket(char* data, int len, int recievedCSum);
 double greatCircleDistance(double long1, double lat1, double long2, double lat2);
 
 
@@ -111,7 +111,7 @@ packet createPacket(void) {
         cSumStr[cSumStrSize] = '\0';
 
         int cSum = atoi(cSumStr);
-        checksum = checksumPacket(&dataStr, dataStrSize, cSum);
+        checksumBool = checksumPacket(&dataStr, dataStrSize, cSum);
         //checksumBool = 1;
         free(cSumStr);
     }
