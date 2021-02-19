@@ -15,13 +15,13 @@ const double runningSpeedpHr = 6.5;
 
 typedef struct {
     packet previousPacket;
-    int startTime;
-    int endTime;
+    double startTime;
+    double endTime;
     int stepNum = 0;
     int distance = 0;
     int isRunningBool = 0;
-    int timeWalking = 0;
-    int timeRunning = 0;
+    double timeWalking = 0;
+    double timeRunning = 0;
 } session;
 
 // The BlueTooth uses a software serial
