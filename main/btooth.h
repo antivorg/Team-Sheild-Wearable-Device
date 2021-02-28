@@ -25,7 +25,7 @@ void btoothUpdateOuting(session* currentOuting) {
     pairedBool("Update");
     writeData((double) currentOuting->stepNum,
                 (double) currentOuting->distance,
-                currentOuting->timeWaling,
+                currentOuting->timeWalking,
                 currentOuting->timeRunning);
 }
 
@@ -35,7 +35,7 @@ void btoothUploadOuting(session* currentOuting) {
     writeData(currentOuting->endTime,
                 (double) currentOuting->stepNum,
                 (double) currentOuting->distance,
-                currentOuting->timeWaling,
+                currentOuting->timeWalking,
                 currentOuting->timeRunning);
 }
 
@@ -49,7 +49,7 @@ int pairedBool(char* signifier) {
     int pairedBool = 0;
     while(!pairedBool) {
         // Wait for a response
-        while(!btoothSerial.avaliable());
+        while(!btoothSerial.available());
         // Allow time so signifier to load onto buffer
         delay(500);
         if (btoothSerial.read() == signifier) {
@@ -64,9 +64,9 @@ void writeData(double args, ...) {
     va_list vaList;
     va_start(vaList, args);
     while (args) {
-        bToothSerial.write(args);
-        bToothSerial.write(",");
+        btoothSerial.write(args);
+        btoothSerial.write(",");
         args = va_arg(vaList, double);
     }
-    bToothSerial.write("*");
+    btoothSerial.write("*");
 }

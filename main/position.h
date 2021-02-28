@@ -111,7 +111,7 @@ packet createPacket(void) {
         cSumStr[cSumStrSize] = '\0';
 
         int cSum = atoi(cSumStr);
-        checksumBool = checksumPacket(&dataStr, dataStrSize, cSum);
+        checksumBool = checksumPacket(dataStr, dataStrSize, cSum);
         //checksumBool = 1;
         free(cSumStr);
     }
@@ -144,7 +144,7 @@ packet createPacket(void) {
 int checksumPacket(char* data, int len, int recievedCSum) { //broken
 
     // Re-create original packet
-    char packetData[len+2];
+    char packetData[len+5];
     strcpy(packetData, data);
     char* packet = strcat("GPGGA", packetData); // fails on this line idk why
 
