@@ -2,7 +2,7 @@
 #include <position.h>
 #include <btooth.h>
 
-//#include <SoftwareSerial.h>
+#include <SoftwareSerial.h>
 
 const int k = 1000;
 
@@ -10,8 +10,6 @@ const int k = 1000;
 const double homeLongitude = 0;
 const double homeLatitude = 0;
 const double homeRadius = 1;
-
-const double runningSpeedpHr = 6.5;
 
 typedef struct {
     packet previousPacket;
@@ -33,6 +31,9 @@ void setup() {
     Serial.begin(9600);
     while(!Serial);
     btoothSerial.begin(9600);
+    pinMode(greenLED0, Output);
+    pinMode(redLED, Output);
+    pinMode(greenLED1, Output);
 }
 
 void loop() {
