@@ -18,7 +18,8 @@ void updatePosition(session* currentSession);
 // Lower level functions
 packet createPacket(void);
 int checksumPacket(char* data, int len, int recievedCSum);
-double greatCircleDistance(double long1, double lat1, double long2, double lat2);
+double greatCircleDistance(double long1, double lat1,
+                           double long2, double lat2);
 
 
 // Top level functions //
@@ -83,7 +84,7 @@ packet createPacket(void) {
 
         // extract packet data
         int dataStrSize = 0, dataBool = 1;
-        dataStr = (char*) malloc(dataStrSize);
+        dataStr = (char*) calloc(dataStrSize, dataStrSize);
         while (dataBool) {
             char symbol = Serial.read();
             if (symbol=='*') { // checksum begins
@@ -98,7 +99,7 @@ packet createPacket(void) {
         // extract packet checksum
         char* cSumStr;
         int cSumStrSize = 0, cSumBool = 1;
-        cSumStr = malloc(cSumStrSize);
+        cSumStr = calloc(cSumStrSize, cSumStrSize);
         while (cSumBool) {
             char symbol = Serial.read();
             if (symbol=='\r') { // packets delimited by \r\n
@@ -111,7 +112,9 @@ packet createPacket(void) {
         cSumStr[cSumStrSize] = '\0';
 
         int cSum = atoi(cSumStr);
-        checksumBool = checksumPacket(dataStr, dataStrSize, cSum);
+        char reCreatedPacket[] = "GPGGA";
+        strcat(reCreatedPacket, (cont char*) dataStr);
+        checksumBool = checksumPacket(reCreatedPacket, dataStrSize+5, cSum);
         //checksumBool = 1;
         free(cSumStr);
     }
@@ -141,23 +144,16 @@ packet createPacket(void) {
     return currentPacket;
 }
 
-int checksumPacket(char* data, int len, int recievedCSum) { //broken
-
-    // Re-create original packet
-    char packetData[len+5];
-    strcpy(packetData, data);
-    char* packet = strcat("GPGGA", packetData); // fails on this line idk why
-
-    // checksum
+int checksumPacket(char* data, int len, int recievedCSum) {
     int cSum = 0;
-    for (int i=0; i<len+5; i++) {
-        cSum ^= packet[i];
+    for (int i=0; i<len; i++) {
+        cSum ^= data[i];
     }
-
     return cSum==recievedCSum;
 }
 
-double greatCircleDistance(double long1, double lat1, double long2, double lat2) {
+double greatCircleDistance(double long1, double lat1,
+                           double long2, double lat2) {
 
     const int earthRadius = 6371*k;
 
