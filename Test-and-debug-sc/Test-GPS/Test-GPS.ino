@@ -59,7 +59,7 @@ void loop() {
         digitalWrite(greenLED0, LOW);
         digitalWrite(redLED, HIGH);
         digitalWrite(greenLED1, LOW);
-        delay(10*k);
+        delay(2*k);
     } else {
         // outside thus outing begins
         session currentOuting = startSession();
@@ -77,6 +77,7 @@ void loop() {
             }
             digitalWrite(greenLED1, flashState);
         }
+        delay(2*k);
         currentOuting.endTime = createPacket().time;
     }
 
