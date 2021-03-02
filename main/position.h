@@ -113,7 +113,7 @@ packet createPacket(void) {
 
         int cSum = atoi(cSumStr);
         char reCreatedPacket[] = "GPGGA";
-        strcat(reCreatedPacket, (cont char*) dataStr);
+        strcat(reCreatedPacket, (const char*) dataStr);
         checksumBool = checksumPacket(reCreatedPacket, dataStrSize+5, cSum);
         //checksumBool = 1;
         free(cSumStr);

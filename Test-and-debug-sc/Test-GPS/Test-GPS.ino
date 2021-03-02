@@ -1,6 +1,20 @@
-// In this current state it is designed to turn on the red LED
-// when the whatch is indoors and turn on one of the green LEDs
-// when outdoors. The remaining LED should flash when outdoors
+
+/*************************************************************************
+*
+*   GPS test code
+*
+*   The following is a test script, intended to:
+*   - Verify data can be read from the GPS module
+*   - Correct data from the packets is parsed into usable data
+*   - From this data determine if the user is inside of outside
+*
+*   Before compilation the tester must define their test location
+*   on lines . Once compiled the tester can evalute by confirming:
+*   - The red LED is switched on only when within the defined "home"
+*   - The first green LED is switched on only when outside the "home"
+*   - The reamining green LED is on and flashes only when outside
+*
+*************************************************************************/
 
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +32,7 @@ const int greenLED0 = 4;
 const int redLED = 5;
 const int greenLED1 = 6;
 
+// type defs
 typedef struct {
     double longitude;
     double latitude;
@@ -35,26 +50,27 @@ typedef struct {
     double timeRunning = 0;
 } session;
 
-// Top level functions
+// Functions
+// Top level
 int watchWithinHouse(void);
 session startSession(void);
 void updatePosition(session* currentSession);
 
-// Lower level functions
+// Lower level
 packet createPacket(void);
 int checksumPacket(char* data, int len, int recievedCSum);
 double greatCircleDistance(double long1, double lat1,
                            double long2, double lat2);
 
 
-// main //
+// Main //
 
 void setup() {
     Serial.begin(9600);
     while(!Serial);
-    pinMode(greenLED0, Output);
-    pinMode(redLED, Output);
-    pinMode(greenLED1, Output);
+    pinMode(greenLED0, OUTPUT);
+    pinMode(redLED, OUTPUT);
+    pinMode(greenLED1, OUTPUT);
 }
 
 void loop() {
@@ -88,6 +104,7 @@ void loop() {
 
 }
 
+// End of main //
 
 // Top level functions //
 
@@ -180,7 +197,7 @@ packet createPacket(void) {
 
         int cSum = atoi(cSumStr);
         char reCreatedPacket[] = "GPGGA";
-        strcat(reCreatedPacket, (cont char*) dataStr);
+        strcat(reCreatedPacket, (const char*) dataStr);
         checksumBool = checksumPacket(reCreatedPacket, dataStrSize+5, cSum);
         //checksumBool = 1;
         free(cSumStr);
