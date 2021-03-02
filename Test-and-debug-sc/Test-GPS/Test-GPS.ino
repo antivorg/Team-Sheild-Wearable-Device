@@ -5,11 +5,11 @@
 *
 *   The following is a test script, intended to:
 *   - Verify data can be read from the GPS module
-*   - Correct data from the packets is parsed into usable data
-*   - From this data determine if the user is inside of outside
+*   - The correct packets are parsed into usable data
+*   - From this data, determine if the user is inside of outside
 *
 *   Before compilation the tester must define their test location
-*   on lines . Once compiled the tester can evalute by confirming:
+*   on lines 27 and 28. Once compiled the tester can evalute by confirming:
 *   - The red LED is switched on only when within the defined "home"
 *   - The first green LED is switched on only when outside the "home"
 *   - The reamining green LED is on and flashes only when outside
