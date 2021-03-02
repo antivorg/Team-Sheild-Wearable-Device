@@ -156,16 +156,17 @@ double greatCircleDistance(double long1, double lat1,
                            double long2, double lat2) {
 
     const int earthRadius = 6371*k;
+    const double pi = 3.141592654;
 
-    // uses haversine, accurate for "small distances" (the earth is big yknow)
-    double cos_lat1 = cos(lat1);
-    double cos_lat2 = cos(lat2);
-    double sin2_dlat = sin((lat2-lat1)/2);
+    // uses haversine, accurate for small distances
+    double cos_lat1 = cos(pi*lat1/180);
+    double cos_lat2 = cos(pi*lat2/180);
+    double sin2_dlat = sin(pi*(lat2-lat1)/360);
     sin2_dlat = sin2_dlat*sin2_dlat;
-    double sin2_dlong = sin((long2-long1)/2);
+    double sin2_dlong = sin(pi*(long2-long1)/360);
     sin2_dlong = sin2_dlong*sin2_dlong;
 
     double dSigma = 2*asin(sqrt(sin2_dlat+cos_lat1*cos_lat2*sin2_dlong));
-    return dSigma*earthRadius;
+    return dSigma*earthRadius*k;
 
 }
