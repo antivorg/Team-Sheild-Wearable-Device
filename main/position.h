@@ -115,7 +115,6 @@ packet createPacket(void) {
         char reCreatedPacket[] = "GPGGA";
         strcat(reCreatedPacket, (const char*) dataStr);
         checksumBool = checksumPacket(reCreatedPacket, dataStrSize+5, cSum);
-        //checksumBool = 1;
         free(cSumStr);
     }
 
@@ -131,9 +130,13 @@ packet createPacket(void) {
         case 2:
             currentPacket.latitude = atof(tokens);
             break;
-        case 5:
+        case 4:
+            if (*tokens == 'S') currentPacket.latitude = -currentPacket.latitude;
+        case 6:
             currentPacket.longitude = atof(tokens);
             break;
+        case 8:
+            if (*tokens == 'W') currentPacket.longitude = -currentPacket.longitude;
         default:
             tokens = strtok(NULL, ",");
             break;
