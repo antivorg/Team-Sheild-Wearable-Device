@@ -209,13 +209,13 @@ packet createPacket(void) {
     int tokensIndex = 0;
     while (tokens != NULL) {
         switch (tokensIndex) {
-        case 1:
+        case 0:
             currentPacket.time = atof(tokens);
             break;
-        case 3:
+        case 2:
             currentPacket.latitude = atof(tokens);
             break;
-        case 6:
+        case 5:
             currentPacket.longitude = atof(tokens);
             break;
         default:
