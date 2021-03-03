@@ -6,7 +6,8 @@
 *   The following is a test script, intended to:
 *   - Verify data can be read from the GPS module
 *   - The correct packets are parsed into usable data
-*   - From this data, determine if the user is inside of outside
+*   - From this data, determine if the user is inside or outside
+*     their specified location
 *
 *   Before compilation the tester must define their test location
 *   on lines 27 and 28. Once compiled the tester can evalute by confirming:
@@ -155,6 +156,7 @@ packet createPacket(void) {
 
     while (!checksumBool) {
 
+        // correct packet
         char ident[7] = "000000";
         int correctPacketBool = 0;
         while (!correctPacketBool) {
@@ -199,7 +201,6 @@ packet createPacket(void) {
         char reCreatedPacket[] = "GPGGA";
         strcat(reCreatedPacket, (const char*) dataStr);
         checksumBool = checksumPacket(reCreatedPacket, dataStrSize+5, cSum);
-        //checksumBool = 1;
         free(cSumStr);
     }
 
@@ -211,20 +212,16 @@ packet createPacket(void) {
         switch (tokensIndex) {
         case 0:
             currentPacket.time = atof(tokens);
-            break;
-        case 2:
+        case 1:
             currentPacket.latitude = atof(tokens);
-            break;
-        case 4:
+        case 2:
             if (*tokens == 'S') currentPacket.latitude = -currentPacket.latitude;
-        case 6:
+        case 3:
             currentPacket.longitude = atof(tokens);
-            break;
-        case 8:
+        case 4:
             if (*tokens == 'W') currentPacket.longitude = -currentPacket.longitude;
         default:
             tokens = strtok(NULL, ",");
-            break;
         }
         tokensIndex++;
     }

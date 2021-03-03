@@ -126,20 +126,16 @@ packet createPacket(void) {
         switch (tokensIndex) {
         case 0:
             currentPacket.time = atof(tokens);
-            break;
-        case 2:
+        case 1:
             currentPacket.latitude = atof(tokens);
-            break;
-        case 4:
+        case 2:
             if (*tokens == 'S') currentPacket.latitude = -currentPacket.latitude;
-        case 6:
+        case 3:
             currentPacket.longitude = atof(tokens);
-            break;
-        case 8:
+        case 4:
             if (*tokens == 'W') currentPacket.longitude = -currentPacket.longitude;
         default:
             tokens = strtok(NULL, ",");
-            break;
         }
         tokensIndex++;
     }
