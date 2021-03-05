@@ -85,9 +85,8 @@ void loop() {
     } else {
         // outside thus outing begins
         session currentOuting = startSession();
-        digitalWrite(greenLED1, HIGH);
+        digitalWrite(greenLED0, HIGH);
         digitalWrite(redLED, LOW);
-        digitalWrite(greenLED1, HIGH);
         int flashState = HIGH;
 
         while (!watchWithinHouse()) {
