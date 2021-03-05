@@ -44,8 +44,6 @@ void btoothUploadOuting(session* currentOuting) {
 
 int pairedBool(char* signifier) {
 
-    // Will be adding a time interupt to exit if it takes too long
-
     int pairedBool = 0;
     while(!pairedBool) {
         // Wait for a response
@@ -64,6 +62,8 @@ void writeData(double args, ...) {
     va_list vaList;
     va_start(vaList, args);
     while (args) {
+        //char writtenString[10];
+        //sprintf(writtenString, 10, "%f", args);
         btoothSerial.write(args);
         btoothSerial.write(",");
         args = va_arg(vaList, double);
