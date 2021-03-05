@@ -16,13 +16,13 @@ int pairedBool(char* signifier);
 
 void btoothStartOuting(session* currentOuting) {
     btoothSerial.write("Start");
-    pairedBool("Start");
+    //pairedBool("Start");
     writeData(currentOuting->startTime);
 }
 
 void btoothUpdateOuting(session* currentOuting) {
     btoothSerial.write("Update");
-    pairedBool("Update");
+    //pairedBool("Update");
     writeData((double) currentOuting->stepNum,
                 (double) currentOuting->distance,
                 currentOuting->timeWalking,
@@ -31,7 +31,7 @@ void btoothUpdateOuting(session* currentOuting) {
 
 void btoothUploadOuting(session* currentOuting) {
     btoothSerial.write("Upload");
-    pairedBool("Upload");
+    //pairedBool("Upload");
     writeData(currentOuting->endTime,
                 (double) currentOuting->stepNum,
                 (double) currentOuting->distance,
