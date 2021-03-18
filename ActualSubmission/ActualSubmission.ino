@@ -259,23 +259,23 @@ packet createPacket(void) {
     packet currentPacket;
     char* tokens = strtok(dataStr, ",");
     int tokensIndex = 0;
+    double lat, lon;
     while (tokens != NULL) {
         switch (tokensIndex) {
-        case 0:
-            currentPacket.time = atof(tokens);
         case 1:
-            double lat = atof(tokens);
-            currentPacket.latitude = (int) (lat/100) + ((lat/100) - ((int) lat /100))*100 / 60;
+            currentPacket.time = atof(tokens);
         case 2:
-            if (*tokens == 'S') currentPacket.latitude = -currentPacket.latitude;
+            lat = atof(tokens);
+            currentPacket.latitude = (int) (lat/100) + ((lat/100) - ((int) lat /100))*100 / 60;
         case 3:
-            double lon = atof(tokens);
-            currentPacket.longitude = (int) (lon/100) + ((lon/100) - ((int) lon /100))*100 / 60;
+            if (*tokens == 'S') currentPacket.latitude = -currentPacket.latitude;
         case 4:
+            lon = atof(tokens);
+            currentPacket.longitude = (int) (lon/100) + ((lon/100) - ((int) lon /100))*100 / 60;
+        case 5:
             if (*tokens == 'W') currentPacket.longitude = -currentPacket.longitude;
-        default:
-            tokens = strtok(NULL, ",");
         }
+        tokens = strtok(NULL, ",");
         tokensIndex++;
     }
     free(dataStr);
